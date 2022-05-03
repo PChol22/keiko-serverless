@@ -1,7 +1,7 @@
 import { AppBar, Button, Toolbar, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import nft1 from 'assets/nft1.png';
 import nft2 from 'assets/nft2.png';
 import nft3 from 'assets/nft3.png';
@@ -34,42 +34,56 @@ interface ApeNFTData {
   imageIndex: number;
 }
 
+// TODO : Adapt Backend Lambdas (Response Format, Routes...)
+
 const ApeNFTImgs = [nft1, nft2, nft3, nft4, nft5];
-
-const randomIntFromInterval = (min: number, max: number) =>
-  Math.floor(Math.random() * (max - min + 1) + min);
-
-const getNFTPrice = () => randomIntFromInterval(0, 100000);
 
 const Home = (): JSX.Element => {
   const [score, setScore] = useState(0);
 
   const [apeNFTs, setApeNFTs] = useState<ApeNFTProps[]>([]);
 
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    setUserId(Math.floor(Math.random() * 10000).toString());
+  }, []);
+
   useAsync(async () => {
-    const { data } = await client.get<ApeNFTData[]>('/nfts');
+    const { data } = await client.get<{
+      balance: number;
+      nftsList: ApeNFTData[];
+    }>(`/nfts/${userId}`);
     setApeNFTs(
-      data.map(apeNFT => ({
+      data.nftsList.map(apeNFT => ({
         ...apeNFT,
         src: ApeNFTImgs[apeNFT.imageIndex],
       })),
     );
+    setScore(data.balance);
   });
 
   const buyApeNFT = async () => {
-    const { data } = await client.post<ApeNFTData>(`/nfts`);
+    const { data } = await client.post<{ balance: number; newNft: ApeNFTData }>(
+      `/nfts/${userId}`,
+    );
 
     setApeNFTs(prevApeNFTs =>
-      prevApeNFTs.concat({ ...data, src: ApeNFTImgs[data.imageIndex] }),
+      prevApeNFTs.concat({
+        ...data.newNft,
+        src: ApeNFTImgs[data.newNft.imageIndex],
+      }),
     );
-    setScore(prevScore => prevScore - getNFTPrice());
+    setScore(data.balance);
   };
 
   const sellApeNFT = async (apeNFTId: string) => {
-    await client.delete(`/nfts/${apeNFTId}`);
+    const { data } = await client.delete<{ balance: number }>(
+      `/nfts/${apeNFTId}`,
+    );
 
     setApeNFTs(prevApeNFTs => prevApeNFTs.filter(({ id }) => id !== apeNFTId));
-    setScore(prevScore => prevScore + getNFTPrice());
+    setScore(data.balance);
   };
   const audio = useAudio(coin, { volume: 0.8, playbackRate: 1 });
 
@@ -89,6 +103,9 @@ const Home = (): JSX.Element => {
           </Button>
           <Typography variant="h1" sx={{ flexGrow: 1 }}>
             {'Learn Serverless with Bored Apes'}
+          </Typography>
+          <Typography variant="h1" sx={{ flexGrow: 1 }}>
+            {`UserId: ${userId}`}
           </Typography>
           <Typography
             variant="h1"
