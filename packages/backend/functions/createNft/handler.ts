@@ -16,19 +16,23 @@ interface NftPayload {
   };
 }
 
-export const main = async (): Promise<NftPayload> => {
+export const main = async (event: {
+  pathParameters: { userId: number };
+}): Promise<NftPayload> => {
   const id = randomUUID();
+  const owner = event.pathParameters.userId;
 
   const newNft = {
     id,
     positionX: intervalRandInt(5, 90),
     positionY: intervalRandInt(10, 90),
     imageIndex: intervalRandInt(0, 4),
+    owner,
   };
 
   const Item = {
     PK: { S: 'Nft' },
-    SK: { S: id },
+    SK: { S: `${owner}/${id}` },
     id: { S: id },
     positionX: { N: newNft.positionX.toString() },
     positionY: { N: newNft.positionY.toString() },

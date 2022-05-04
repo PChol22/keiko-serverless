@@ -43,13 +43,12 @@ const Home = (): JSX.Element => {
 
   const [apeNFTs, setApeNFTs] = useState<ApeNFTProps[]>([]);
 
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState<number | null>(null);
 
-  useEffect(() => {
-    setUserId(Math.floor(Math.random() * 10000).toString());
-  }, []);
+  useEffect(() => setUserId(Math.floor(Math.random() * 10000 + 1)), []);
 
   useAsync(async () => {
+    if (!userId) return;
     const { data } = await client.get<{
       balance: number;
       nftsList: ApeNFTData[];
@@ -61,7 +60,7 @@ const Home = (): JSX.Element => {
       })),
     );
     setScore(data.balance);
-  });
+  }, [userId]);
 
   const buyApeNFT = async () => {
     const { data } = await client.post<{ balance: number; newNft: ApeNFTData }>(
@@ -79,7 +78,7 @@ const Home = (): JSX.Element => {
 
   const sellApeNFT = async (apeNFTId: string) => {
     const { data } = await client.delete<{ balance: number }>(
-      `/nfts/${apeNFTId}`,
+      `/nfts/${apeNFTId}?owner=${userId}`,
     );
 
     setApeNFTs(prevApeNFTs => prevApeNFTs.filter(({ id }) => id !== apeNFTId));
