@@ -7,7 +7,7 @@ const documentClient = new DocumentClient({
   convertEmptyValues: false,
 });
 
-export const userTable = new Table({
+export const UserTable = new Table({
   name: process.env.NFT_TABLE_NAME || 'NO_TABLE_FOUND',
   partitionKey: PARTITION_KEY,
   sortKey: SORT_KEY,

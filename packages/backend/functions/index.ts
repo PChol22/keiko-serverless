@@ -3,6 +3,7 @@ import { deleteNft } from './deleteNft/config';
 import { createNft } from './createNft/config';
 import { logMessage } from './logMessage/config';
 import { setBalance } from './setBalance/config';
+import { getBalance } from './getBalance/config';
 
 export const functions = {
   getNft,
@@ -10,4 +11,5 @@ export const functions = {
   createNft,
   deleteNft,
   setBalance,
+  getBalance,
 };

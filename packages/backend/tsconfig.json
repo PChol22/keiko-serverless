@@ -4,6 +4,7 @@
     "preserveSymlinks": true,
     "baseUrl": ".",
     "esModuleInterop": true,
+    "lib": ["DOM"]
   },
   "include": ["./**/*.ts"],
   "ts-node": {

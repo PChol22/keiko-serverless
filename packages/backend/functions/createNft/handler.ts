@@ -13,7 +13,7 @@ interface NftPayload {
     positionX: number;
     positionY: number;
     imageIndex: number;
-  };
+  } | null;
 }
 
 export const main = async (event: {
@@ -42,6 +42,23 @@ export const main = async (event: {
     TableName: process.env.NFT_TABLE_NAME,
     Item,
   };
+
+  const nftPrice = Math.floor(Math.random() * 9000 + 1000);
+
+  const balance = await fetch(
+    `https://ujpufcmks4.execute-api.eu-west-1.amazonaws.com/balances/${owner}`,
+  )
+    .then(res => res.json())
+    .then((result: { balance: number; userId: string }) => result.balance);
+
+  if (nftPrice > balance) return { balance, newNft: null };
+
+  const newBalance = balance - nftPrice;
+
+  fetch(
+    `https://ujpufcmks4.execute-api.eu-west-1.amazonaws.com/balances/${owner}?balance=${newBalance}`,
+  );
+
   await client.send(new PutItemCommand(params));
   return {
     balance: 1000,

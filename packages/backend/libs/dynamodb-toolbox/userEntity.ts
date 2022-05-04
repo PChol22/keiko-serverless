@@ -1,6 +1,6 @@
 import { PARTITION_KEY } from 'resources/dynamoDB';
 import { Entity } from 'dynamodb-toolbox';
-import { userTable } from './userTable';
+import { UserTable } from './userTable';
 
 export const UserEntity = new Entity({
   name: 'User',
@@ -9,5 +9,5 @@ export const UserEntity = new Entity({
     userId: { type: 'string', sortKey: true },
     balance: { type: 'number' },
   },
-  table: userTable,
+  table: UserTable,
 } as const);
