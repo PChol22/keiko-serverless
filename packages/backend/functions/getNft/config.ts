@@ -10,7 +10,7 @@ export const getNft = {
     {
       httpApi: {
         method: 'get',
-        path: '/nfts',
+        path: '/nfts/{userId}',
       },
     },
   ],

@@ -8,7 +8,7 @@ export const createNft = {
     {
       httpApi: {
         method: 'post',
-        path: '/nfts',
+        path: '/nfts/{userId}',
       },
     },
   ],

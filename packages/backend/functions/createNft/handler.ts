@@ -6,7 +6,17 @@ const intervalRandInt = (min: number, max: number) =>
 
 const client = new DynamoDBClient({ region: 'eu-west-1' });
 
-export const main = async (): Promise<any> => {
+interface NftPayload {
+  balance: number;
+  newNft: {
+    id: string;
+    positionX: number;
+    positionY: number;
+    imageIndex: number;
+  };
+}
+
+export const main = async (): Promise<NftPayload> => {
   const id = randomUUID();
 
   const newNft = {
@@ -29,5 +39,8 @@ export const main = async (): Promise<any> => {
     Item,
   };
   await client.send(new PutItemCommand(params));
-  return newNft;
+  return {
+    balance: 1000,
+    newNft: newNft,
+  };
 };

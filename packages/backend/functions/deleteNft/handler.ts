@@ -2,9 +2,12 @@ import { NFTEntity } from 'libs/dynamodb-toolbox/nftEntity';
 
 export const main = async (event: {
   pathParameters: { id: string };
-}): Promise<string> => {
+}): Promise<{ balance: number }> => {
   const item = {
     id: event.pathParameters.id,
   };
-  return NFTEntity.delete(item);
+  await NFTEntity.delete(item);
+  return {
+    balance: 1000,
+  };
 };

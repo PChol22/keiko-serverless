@@ -14,5 +14,8 @@ export const main = async (): Promise<any> => {
 
   const { Items = [] as any } = await client.send(new QueryCommand(params));
 
-  return Items.map(unmarshall);
+  return {
+    balance: 1000,
+    nftsList: Items.map(unmarshall),
+  };
 };
